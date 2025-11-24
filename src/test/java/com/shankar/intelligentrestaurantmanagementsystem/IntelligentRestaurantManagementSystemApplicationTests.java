@@ -8,6 +8,7 @@ class IntelligentRestaurantManagementSystemApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

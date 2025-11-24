@@ -1,5 +1,7 @@
 package com.shankar.intelligentrestaurantmanagementsystem.util;
 
+import com.shankar.intelligentrestaurantmanagementsystem.entity.Role;
+import com.shankar.intelligentrestaurantmanagementsystem.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,8 +9,9 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -18,12 +21,20 @@ public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    private final long JWT_EXPIRATION = 24 * 60 * 60 * 1000; // 24 hours
+    public final long JWT_EXPIRATION = 1 * 60 * 60 * 1000; // 1 hours
 
     // Generate token
-    public String generateToken(String email) {
+    public String generateToken(User user) {
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", user.getId());
+        claims.put("name", user.getName());
+        claims.put("email", user.getEmail());
+        claims.put("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -33,6 +44,25 @@ public class JwtUtil {
     // Extract username
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("id", Long.class));
+    }
+
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> {
+            Object rolesObject = claims.get("roles");
+
+            if (rolesObject instanceof List<?>) {
+                return ((List<?>) rolesObject)
+                        .stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+            }
+
+            return Collections.emptyList();
+        });
     }
 
     // Extract expiration

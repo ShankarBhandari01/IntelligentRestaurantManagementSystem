@@ -1,5 +1,6 @@
 package com.shankar.intelligentrestaurantmanagementsystem.config;
 
+import com.shankar.intelligentrestaurantmanagementsystem.service.impl.CustomUserDetailsService;
 import com.shankar.intelligentrestaurantmanagementsystem.util.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,22 +24,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/login/**",
-                                "/api/users/signUp/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html")
-                        .permitAll() // public endpoints
+                        .requestMatchers("/auth/login/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -64,7 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(authenticationProvider())
                 .build();

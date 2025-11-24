@@ -13,6 +13,7 @@ public class UserMapper {
                 .name(req.getName())
                 .email(req.getEmail())
                 .password(req.getPassword())
+                .isEnabled(req.getIsEnabled())
                 .build();
     }
 
@@ -21,6 +22,8 @@ public class UserMapper {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .isEnabled(user.getIsEnabled())
+                .role(user.getRoles())
                 .build();
     }
 }

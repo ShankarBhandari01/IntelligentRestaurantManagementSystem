@@ -11,4 +11,8 @@ public class UserRequest {
     private String email;
     @NonNull
     private String password;
+    @NonNull
+    private Boolean isEnabled;
+
+    private long roleId;
 }

@@ -1,5 +1,6 @@
 package com.shankar.intelligentrestaurantmanagementsystem.service.impl;
 
+import com.shankar.intelligentrestaurantmanagementsystem.domain.UserRolesManager;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.UserRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.UserResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.User;
@@ -15,17 +16,22 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserRolesManager userRolesManager;
 
     @Override
     public UserResponse createUser(UserRequest request) {
         try {
+
             User user = userMapper.toEntity(request);
+            // assign roles to user
+            user = userRolesManager.addRoleToUser(user, request.getRoleId());
+            // user to database
             userRepository.save(user);
+            // return user
             return userMapper.toResponse(user);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-
     }
 
     @Override

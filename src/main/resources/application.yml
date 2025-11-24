@@ -1,6 +1,9 @@
 spring:
   application:
     name: intelligent-restaurant-management-system
+server:
+  servlet:
+    context-path: /api/v1
 
 ---
 spring:
@@ -28,6 +31,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8080
+
 logging:
   level:
     root: DEBUG
@@ -50,6 +54,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8080
+
 logging:
   level:
     root: INFO
