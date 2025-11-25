@@ -1,13 +1,14 @@
 package com.shankar.intelligentrestaurantmanagementsystem.controller;
 
+import com.shankar.intelligentrestaurantmanagementsystem.domain.TokenManager;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.LoginRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.ApiResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.LoginResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Token;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.User;
-import com.shankar.intelligentrestaurantmanagementsystem.service.TokenService;
 import com.shankar.intelligentrestaurantmanagementsystem.util.CustomUserDetails;
 import com.shankar.intelligentrestaurantmanagementsystem.util.JwtUtil;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,11 +31,12 @@ import java.util.Date;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
+    private final TokenManager tokenManager;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<@NonNull ApiResponse<?>> login(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<@NonNull ApiResponse<?>> login(@RequestBody @Valid LoginRequest request,
+                                                         HttpSession session) {
         try {
             // Authenticate credentials
             Authentication authentication = authenticationManager.authenticate(
@@ -46,7 +48,6 @@ public class AuthController {
             // Get authenticated user details
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             LoginResponse response;
-
             if (userDetails != null) {
                 response = prepareLoginResponse(userDetails.getUser());
             } else {
@@ -67,21 +68,16 @@ public class AuthController {
     }
 
     private LoginResponse prepareLoginResponse(User user) {
-        // Generate JWT with claims
-        String token = jwtUtil.generateToken(user);
+        Map<String, Object> token = jwtUtil.generateTokens(user);
 
-        // SAVE token to DB
-        Token newToken = new Token();
-        newToken.setUserId(user.getId());
-        newToken.setToken(token);
-        newToken.setExpired(false);
-        newToken.setRevoked(false);
-        newToken.setExpiresAt(new Date(System.currentTimeMillis() + jwtUtil.JWT_EXPIRATION));
-
-        tokenService.saveToken(newToken);
+        Token newToken = tokenManager.saveTokenToDatabase(token.get("token"),
+                user, "token", token.get("tokenExpiration"));
+        Token refreshToken = tokenManager.saveTokenToDatabase(token.get("refresh_token").toString(),
+                user, "refresh", token.get("refresh_tokenExpiration"));
 
         return LoginResponse.builder()
-                .token(token)
+                .token(newToken.getToken())
+                .refreshToken(refreshToken.getToken())
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
@@ -89,5 +85,7 @@ public class AuthController {
                 .isEnabled(user.getIsEnabled())
                 .build();
     }
+
+
 }
 

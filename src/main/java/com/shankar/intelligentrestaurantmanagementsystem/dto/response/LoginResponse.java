@@ -14,6 +14,7 @@ import java.util.Set;
 @Builder
 public class LoginResponse {
     private String token;
+    private String refreshToken;
     private String name;
     private String email;
     private Set<Role> roles;

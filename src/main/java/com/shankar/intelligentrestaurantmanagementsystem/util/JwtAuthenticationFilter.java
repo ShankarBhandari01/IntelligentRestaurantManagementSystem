@@ -1,5 +1,6 @@
 package com.shankar.intelligentrestaurantmanagementsystem.util;
 
+import com.shankar.intelligentrestaurantmanagementsystem.dto.response.ApiResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.service.TokenService;
 import com.shankar.intelligentrestaurantmanagementsystem.service.impl.CustomUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -29,9 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain
-    )
-            throws ServletException, IOException {
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -51,35 +51,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // get token from database
                 var dbToken = tokenService.getToken(token);
 
-                if (dbToken.isRevoked()) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Token Revoked");
+                if (dbToken != null && dbToken.isRevoked()) {
+                    writeError(response, "Token Revoked");
                     return;
                 } else if (jwtUtil.validateToken(token, userDetails.getUsername())) {
-                    var authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
-                    );
-
+                    var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                     // Save authentication
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
 
-
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token expired");
+            writeError(response, "Token expired");
             return;
-
         } catch (JwtException | IllegalArgumentException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid Token");
+            writeError(response, "Invalid Token");
+            return;
+        } catch (Exception e) {
+            writeError(response, e.getMessage());
             return;
         }
-
         filterChain.doFilter(request, response);
 
+    }
+
+
+    public void writeError(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(new ApiResponse<>(false, message, null)));
     }
 }

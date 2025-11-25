@@ -18,10 +18,10 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-
-    @Column(nullable = false, unique = true, length = 500)
+    @Column(nullable = false, unique = true)
     private String token;
+
+    private String type;
 
     private boolean expired;
 
@@ -30,4 +30,8 @@ public class Token {
     private Date createdAt = new Date();
 
     private Date expiresAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

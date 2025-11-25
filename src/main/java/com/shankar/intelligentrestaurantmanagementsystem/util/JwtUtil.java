@@ -22,21 +22,35 @@ public class JwtUtil {
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     public final long JWT_EXPIRATION = 1 * 60 * 60 * 1000; // 1 hours
+    public final long JWT_REFRESH_EXPIRATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 
     // Generate token
-    public String generateToken(User user) {
-
+    public Map<String, Object> generateTokens(User user) {
+        Map<String, Object> response = new HashMap<>();
         Map<String, Object> claims = new HashMap<>();
+
         claims.put("id", user.getId());
         claims.put("name", user.getName());
         claims.put("email", user.getEmail());
         claims.put("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
 
+        // regular token and refresh token
+        response.put("token", generateToken(claims, user, "token"));
+        response.put("tokenExpiration", JWT_EXPIRATION);
+
+        // and refresh token
+        response.put("refresh_token", generateToken(claims, user, "Refresh"));
+        response.put("refresh_tokenExpiration", JWT_REFRESH_EXPIRATION);
+
+        return response;
+    }
+
+    private String generateToken(Map<String, Object> claims, User user, String tokenType) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + (Objects.equals(tokenType, "token") ? JWT_EXPIRATION : JWT_REFRESH_EXPIRATION)))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

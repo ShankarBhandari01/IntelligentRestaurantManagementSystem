@@ -1,7 +1,10 @@
 package com.shankar.intelligentrestaurantmanagementsystem.dto.request;
 
+import com.shankar.intelligentrestaurantmanagementsystem.entity.Role;
 import lombok.Data;
 import lombok.NonNull;
+
+import java.util.List;
 
 @Data
 public class UserRequest {
@@ -14,5 +17,5 @@ public class UserRequest {
     @NonNull
     private Boolean isEnabled;
 
-    private long roleId;
+    private List<Role> roles;
 }

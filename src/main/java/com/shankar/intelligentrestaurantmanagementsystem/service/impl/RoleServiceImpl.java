@@ -8,7 +8,7 @@ import com.shankar.intelligentrestaurantmanagementsystem.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getRoleById(Long id) {
         return rolesRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
+    }
+
+    @Override
+    public Set<Role> getRoleByIdInList(Set<Long> roleIds) {
+        return rolesRepository.getRoleByIdIn(roleIds).orElseThrow(() -> new RuntimeException("Role not found"));
     }
 
 }

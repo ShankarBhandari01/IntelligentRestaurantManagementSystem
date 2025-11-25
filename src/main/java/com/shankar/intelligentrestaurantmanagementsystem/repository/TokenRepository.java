@@ -15,6 +15,10 @@ public interface TokenRepository extends JpaRepository<@NonNull Token, @NonNull 
     @Query("SELECT t FROM Token t WHERE t.token = ?1")
     Optional<Token> findByToken(String token);
 
-    @Query("SELECT t FROM Token t WHERE t.userId = ?1 AND t.expired = false AND t.revoked = false")
+    @Query("SELECT t " +
+            "FROM Token t " +
+            "WHERE t.user.id = ?1 " +
+            "AND t.expired = false " +
+            "AND t.revoked = false")
     Optional<List<Token>> findAllByUserIdAndExpiredFalseAndRevokedFalse(Long userId);
 }

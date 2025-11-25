@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
             User user = userMapper.toEntity(request);
             // assign roles to user
-            user = userRolesManager.addRoleToUser(user, request.getRoleId());
+            user = userRolesManager.addRoleToUser(user, request.getRoles());
             // user to database
             userRepository.save(user);
             // return user
