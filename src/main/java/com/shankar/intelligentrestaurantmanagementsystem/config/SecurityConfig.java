@@ -3,6 +3,7 @@ package com.shankar.intelligentrestaurantmanagementsystem.config;
 import com.shankar.intelligentrestaurantmanagementsystem.service.impl.CustomUserDetailsService;
 import com.shankar.intelligentrestaurantmanagementsystem.util.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +31,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(
@@ -55,7 +56,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(passwordEncoder());
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
@@ -66,7 +68,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class).authenticationProvider(authenticationProvider()).build();
     }
 }

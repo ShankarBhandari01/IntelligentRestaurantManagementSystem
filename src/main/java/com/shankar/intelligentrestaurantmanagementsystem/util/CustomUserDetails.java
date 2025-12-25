@@ -1,8 +1,8 @@
 package com.shankar.intelligentrestaurantmanagementsystem.util;
 
 import com.shankar.intelligentrestaurantmanagementsystem.entity.User;
+import jakarta.annotation.Nullable;
 import lombok.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
