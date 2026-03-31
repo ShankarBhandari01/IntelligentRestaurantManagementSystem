@@ -14,5 +14,4 @@ public class UserResponse {
     private String email;
     private Set<Role> role;
     private Boolean isEnabled;
-
 }

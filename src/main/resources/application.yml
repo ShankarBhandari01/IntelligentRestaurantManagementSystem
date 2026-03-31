@@ -33,8 +33,6 @@ spring:
     active: dev   # default profile, can be overridden with --spring.profiles.active=prod
 
 
-
-
 server:
   servlet:
     context-path: /api/v1

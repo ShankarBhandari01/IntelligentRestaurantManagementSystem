@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtil {
 
-    // Secret key (use env variable in production)
+    // Secret key
     private final String SECRET_KEY = "your_secret_key_here_change_this_to_very_long_key";
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());

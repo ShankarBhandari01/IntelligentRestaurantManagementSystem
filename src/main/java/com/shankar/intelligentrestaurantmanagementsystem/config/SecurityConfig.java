@@ -42,10 +42,15 @@ public class SecurityConfig {
                                 .accessDeniedHandler((req, rsp, e) -> jwtAuthenticationFilter
                                         .writeError(rsp, e.getMessage())))
 
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                .authorizeHttpRequests(
+                        auth -> auth
+                                .requestMatchers("/auth/login/**",
+                                        "/admin/menuItem/all",
+                                        "/admin/category/all"
+                                ).permitAll()
+                                .anyRequest().authenticated()
+                )
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authenticationProvider(authenticationProvider())

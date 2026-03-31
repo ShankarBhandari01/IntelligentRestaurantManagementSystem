@@ -26,8 +26,6 @@ public class RolesController {
         try {
             var response = roleService.saveRole(roleRequest);
             return ResponseEntity.status(201).body(new ApiResponse<>(true, "Role added successfully", response));
-
-
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new ApiResponse<>(false, e.getMessage(), null));
         }

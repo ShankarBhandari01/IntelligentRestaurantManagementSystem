@@ -3,7 +3,6 @@ package com.shankar.intelligentrestaurantmanagementsystem.service.impl;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Kot;
 import com.shankar.intelligentrestaurantmanagementsystem.repository.KotRepository;
 import com.shankar.intelligentrestaurantmanagementsystem.service.KotService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -18,7 +17,7 @@ public class KotServiceImpl implements KotService {
 
     @Async
     @Override
-    @CircuitBreaker(name = "kotService", fallbackMethod = "fallback")
+   // @CircuitBreaker(name = "kotService", fallbackMethod = "fallback")
     @Retry(name = "kotServiceRetry")
     public CompletableFuture<Kot> sendOrderToKot(Kot kot) {
         var savedKot = kotRepository.save(kot);

@@ -1,9 +1,7 @@
 package com.shankar.intelligentrestaurantmanagementsystem.Integration;
 
-import com.shankar.intelligentrestaurantmanagementsystem.config.RabbitConfig;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.OrderRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.service.OrderService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +13,7 @@ public class OrderConsumer {
         this.orderService = orderService;
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
+    //@RabbitListener(queues = RabbitConfig.QUEUE_NAME)
     public void receiveMessage(OrderRequest orderRequest) {
         orderService.processOrder(orderRequest);
     }

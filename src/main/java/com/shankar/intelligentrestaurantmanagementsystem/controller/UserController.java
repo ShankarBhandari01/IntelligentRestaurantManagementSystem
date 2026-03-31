@@ -21,7 +21,6 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-
     @PostMapping("/sign-up")
     public ResponseEntity<@NonNull ApiResponse<?>> create(@RequestBody @Valid UserRequest request,
                                                           HttpSession session) {
