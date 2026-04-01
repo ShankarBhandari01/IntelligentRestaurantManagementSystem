@@ -1,5 +1,7 @@
 package com.shankar.intelligentrestaurantmanagementsystem.entity;
 
+import com.shankar.intelligentrestaurantmanagementsystem.dto.KotStatus;
+import com.shankar.intelligentrestaurantmanagementsystem.dto.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,5 +34,8 @@ public class Order {
     private List<OrderItems> items;
 
     private double totalAmount;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
 }

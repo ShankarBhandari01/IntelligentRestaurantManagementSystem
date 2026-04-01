@@ -31,6 +31,6 @@ public class Kot {
     private KotStatus status;  // CREATED, SENT, PRINTED, FAILED
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "kot_id")
+    @JoinColumn(name = "kot_id", nullable = false)
     private List<KotItem> items;
 }

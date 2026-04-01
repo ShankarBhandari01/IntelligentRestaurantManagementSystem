@@ -28,15 +28,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController extends BaseController {
 
     private final AuthenticationManager authenticationManager;
     private final TokenManager tokenManager;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<@NonNull ApiResponse<?>> login(@RequestBody @Valid LoginRequest request,
-                                                         HttpSession session) {
+    public ResponseEntity<@NonNull ApiResponse<LoginResponse>> login(@RequestBody @Valid LoginRequest request,
+                                                                     HttpSession session) {
         try {
             // Authenticate credentials
             Authentication authentication = authenticationManager.authenticate(
@@ -53,17 +53,12 @@ public class AuthController {
             } else {
                 throw new RuntimeException("User not found");
             }
-
-            return ResponseEntity.ok(
-                    new ApiResponse<>(true, "Login Successful", response)
-            );
+            return ok(response, "Login Successful");
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401)
-                    .body(new ApiResponse<>(false, "Invalid email or password", null));
+            return fail("Invalid email or password");
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(401)
-                    .body(new ApiResponse<>(false, "Authentication failed", null));
+            return fail("Authentication failed");
         }
     }
 

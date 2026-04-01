@@ -2,6 +2,7 @@ package com.shankar.intelligentrestaurantmanagementsystem.controller;
 
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.MenuItemRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.ApiResponse;
+import com.shankar.intelligentrestaurantmanagementsystem.dto.response.MenuItemResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.service.MenuItemService;
 import jakarta.validation.Valid;
 import lombok.NonNull;
@@ -10,38 +11,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 // need better logging monitoring and error handling
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/menuItem")
-public class MenuItemController {
+public class MenuItemController extends BaseController {
     private final MenuItemService menuItemService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
-    public ResponseEntity<@NonNull ApiResponse<?>> addMenuItem(
+    public ResponseEntity<@NonNull ApiResponse<MenuItemResponse>> addMenuItem(
             @RequestBody
-            @Valid MenuItemRequest menuItemRequest) {
-        try {
-            var response = menuItemService.saveMenuItem(menuItemRequest).get();
-            return ResponseEntity.status(201).body(new ApiResponse<>(true, "Menu Item added successfully", response));
+            @Valid MenuItemRequest menuItemRequest)
+            throws ExecutionException, InterruptedException {
 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getCause().getMessage(), null));
-        }
+        var response = menuItemService.saveMenuItem(menuItemRequest).get();
+        return created(response);
     }
 
     // add pagination to this api later
-
     @GetMapping("/all")
-    public ResponseEntity<@NonNull ApiResponse<?>> getAllMenuItems() {
-        try {
-            var response = menuItemService.getAllMenuItems().get();
+    public ResponseEntity<@NonNull ApiResponse<List<MenuItemResponse>>> getAllMenuItems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) throws ExecutionException, InterruptedException {
 
-            return ResponseEntity.ok(new ApiResponse<>(true, "", response));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
-        }
+        var response = menuItemService.getAllMenuItems().get();
+        return ok(response);
     }
-
 }
+

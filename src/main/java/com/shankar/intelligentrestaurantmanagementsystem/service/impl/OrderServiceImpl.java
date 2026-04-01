@@ -1,17 +1,23 @@
 package com.shankar.intelligentrestaurantmanagementsystem.service.impl;
 
+import com.shankar.intelligentrestaurantmanagementsystem.domain.ProcessOrder;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.KotStatus;
+import com.shankar.intelligentrestaurantmanagementsystem.dto.OrderStatus;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.OrderRequest;
+import com.shankar.intelligentrestaurantmanagementsystem.dto.response.OrderResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Customer;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Kot;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.KotItem;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Order;
+import com.shankar.intelligentrestaurantmanagementsystem.mapper.CustomerMapper;
 import com.shankar.intelligentrestaurantmanagementsystem.mapper.OrderMapper;
 import com.shankar.intelligentrestaurantmanagementsystem.repository.CustomerRepository;
 import com.shankar.intelligentrestaurantmanagementsystem.repository.OrderRepository;
 import com.shankar.intelligentrestaurantmanagementsystem.service.KotService;
+import com.shankar.intelligentrestaurantmanagementsystem.service.MenuItemService;
 import com.shankar.intelligentrestaurantmanagementsystem.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,46 +30,61 @@ import java.util.concurrent.CompletableFuture;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
-
-    private final OrderMapper orderMapper;
+    private final MenuItemService menuItemService;
     private final KotService kotService;
+    private final OrderMapper orderMapper;
+    private final CustomerMapper customerMapper;
 
     @Override
     @Transactional
-    public CompletableFuture<Void> processOrder(OrderRequest orderRequest) {
-        Customer incoming = orderRequest.getCustomer();
+    @Async
+    public CompletableFuture<OrderResponse> processOrder(OrderRequest orderRequest) {
+        try {
+            ProcessOrder processOrder = new ProcessOrder(orderRequest, orderMapper);
 
-        Customer customer = customerRepository
-                .findByEmail(incoming.getEmail())
-                .orElseGet(() -> customerRepository.save(incoming));
+            Customer incoming = customerMapper.toEntity(processOrder.getCustomerDto());
 
-        Order order = orderMapper.toEntity(orderRequest);
-        order.setCustomer(customer);
+            Customer customer = customerRepository
+                    .findByEmail(incoming.getEmail())
+                    .orElseGet(() -> customerRepository.save(incoming));
 
-        var saveOrder = orderRepository.save(order);
+            Order order = processOrder.getOrder();
+            order.setCustomer(customer);
 
-        List<KotItem> kotItems = order.getItems().stream()
-                .map(o ->
-                        new KotItem(
-                                null,
-                                o.getItem(),
-                                o.getQuantity(),
-                                o.getSpecial_requests()
-                        )
-                )
-                .toList();
+            var saveOrder = orderRepository.save(order);
+            // return saved order
+            OrderResponse orderResponse = orderMapper.toResponse(saveOrder);
 
-        // while saving kot need reference of order
-        Kot kot = Kot.builder()
-                .status(KotStatus.CREATED)
-                .orderId(saveOrder.getId())
-                .deviceId("")
-                .createdAt(Instant.now())
-                .items(kotItems)
-                .build();
+            if (saveOrder.getStatus().equals(OrderStatus.PROCESSING)) {
+                Kot kot = processOrder.generateKot();
+                kot.setOrderId(saveOrder.getId());
+                Kot savedKot = kotService.sendOrderToKot(kot).get();
+                orderResponse.setKot(savedKot);
+            }
+            return CompletableFuture.completedFuture(orderResponse);
 
-        kotService.sendOrderToKot(kot);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        return CompletableFuture.completedFuture(null);
+    }
+
+
+    @Override
+    public CompletableFuture<OrderResponse> getOrderById(Long id) {
+        var order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        var response = orderMapper.toResponse(order);
+
+        return CompletableFuture.completedFuture(response);
+    }
+
+    @Override
+    public CompletableFuture<List<OrderResponse>> getAllOrders() {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<OrderResponse> updateOrder(Long id, OrderRequest request) {
+        return null;
     }
 }

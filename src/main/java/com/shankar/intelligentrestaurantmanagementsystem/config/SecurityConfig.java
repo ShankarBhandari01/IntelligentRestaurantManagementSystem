@@ -46,9 +46,11 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers("/auth/login/**",
                                         "/admin/menuItem/all",
-                                        "/admin/category/all"
+                                        "/admin/category/all",
+                                        "/order/**"
                                 ).permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest()
+                                .authenticated()
                 )
 
                 .sessionManagement(session -> session

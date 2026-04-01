@@ -1,5 +1,6 @@
 package com.shankar.intelligentrestaurantmanagementsystem.dto.request;
 
+import com.shankar.intelligentrestaurantmanagementsystem.dto.LanguageDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

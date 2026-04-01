@@ -1,4 +1,4 @@
-package com.shankar.intelligentrestaurantmanagementsystem.dto.request;
+package com.shankar.intelligentrestaurantmanagementsystem.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

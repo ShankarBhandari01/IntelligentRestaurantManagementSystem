@@ -4,6 +4,7 @@ import com.shankar.intelligentrestaurantmanagementsystem.dto.request.OrderReques
 import com.shankar.intelligentrestaurantmanagementsystem.service.OrderService;
 import org.springframework.stereotype.Component;
 
+// this component is used to consume the message from the queue
 @Component
 public class OrderConsumer {
 

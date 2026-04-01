@@ -3,16 +3,22 @@ package com.shankar.intelligentrestaurantmanagementsystem.mapper;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.CategoryRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.CategoryResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Category;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoryMapper extends BaseMapper {
+@RequiredArgsConstructor
+public class CategoryMapper implements Mapper<Category, CategoryRequest, CategoryResponse> {
+    private final LanguageMapper languageMapper;
 
-    public Category toEntity(CategoryRequest request) {
+    @Override
+    public Category toEntity(@NonNull CategoryRequest request) {
+
         return Category.builder()
-                .name(mapToLanguage(request.getName()))
-                .description(mapToLanguage(request.getDescription()))
-                .remarks(mapToLanguage(request.getRemarks()))
+                .name(languageMapper.toEntity(request.getName()))
+                .description(languageMapper.toEntity(request.getDescription()))
+                .remarks(languageMapper.toEntity(request.getRemarks()))
                 .isLunchCategory(request.getIsLunchCategory())
                 .isOrderable(request.getIsOrderable())
                 .isActive(request.getIsActive())
@@ -21,13 +27,13 @@ public class CategoryMapper extends BaseMapper {
 
     }
 
-
-    public CategoryResponse toResponse(Category category) {
+    @Override
+    public CategoryResponse toResponse(@NonNull Category category) {
         return CategoryResponse.builder()
                 .id(category.getId())
-                .name(mapToLanguageDto(category.getName()))
-                .description(mapToLanguageDto(category.getDescription()))
-                .remarks(mapToLanguageDto(category.getRemarks()))
+                .name(languageMapper.toResponse(category.getName()))
+                .description(languageMapper.toResponse(category.getDescription()))
+                .remarks(languageMapper.toResponse(category.getRemarks()))
                 .isLunchCategory(category.getIsLunchCategory())
                 .isOrderable(category.getIsOrderable())
                 .isActive(category.getIsActive())

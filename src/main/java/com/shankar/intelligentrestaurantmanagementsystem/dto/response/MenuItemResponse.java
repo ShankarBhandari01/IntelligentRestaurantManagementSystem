@@ -1,6 +1,6 @@
 package com.shankar.intelligentrestaurantmanagementsystem.dto.response;
 
-import com.shankar.intelligentrestaurantmanagementsystem.dto.request.LanguageDto;
+import com.shankar.intelligentrestaurantmanagementsystem.dto.LanguageDto;
 import lombok.Builder;
 import lombok.Data;
 

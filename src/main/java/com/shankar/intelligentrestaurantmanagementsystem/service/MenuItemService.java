@@ -12,4 +12,5 @@ public interface MenuItemService {
     CompletableFuture<MenuItemResponse> getMenuItem(String id);
 
     CompletableFuture<List<MenuItemResponse>> getAllMenuItems();
+
 }

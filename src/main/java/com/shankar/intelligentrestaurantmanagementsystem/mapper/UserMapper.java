@@ -3,12 +3,13 @@ package com.shankar.intelligentrestaurantmanagementsystem.mapper;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.UserRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.UserResponse;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.User;
+import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
-
-    public User toEntity(UserRequest req) {
+public class UserMapper implements Mapper<User, UserRequest, UserResponse> {
+    @Override
+    public User toEntity(@NonNull UserRequest req) {
         return User.builder()
                 .name(req.getName())
                 .email(req.getEmail())
@@ -17,7 +18,8 @@ public class UserMapper {
                 .build();
     }
 
-    public UserResponse toResponse(User user) {
+    @Override
+    public UserResponse toResponse(@NonNull User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())

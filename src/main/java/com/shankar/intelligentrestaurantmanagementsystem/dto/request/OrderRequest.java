@@ -1,6 +1,7 @@
 package com.shankar.intelligentrestaurantmanagementsystem.dto.request;
 
 
+import com.shankar.intelligentrestaurantmanagementsystem.dto.CustomerDTO;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Customer;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.OrderItems;
 import lombok.Data;
@@ -8,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class OrderRequest {
-    private Customer customer;
+    private CustomerDTO customer;
     private String orderRemarks;
     private String orderType;
     private List<OrderItems> items;

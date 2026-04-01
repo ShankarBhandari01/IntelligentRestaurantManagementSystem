@@ -2,6 +2,7 @@ package com.shankar.intelligentrestaurantmanagementsystem.controller;
 
 import com.shankar.intelligentrestaurantmanagementsystem.dto.request.RoleRequest;
 import com.shankar.intelligentrestaurantmanagementsystem.dto.response.ApiResponse;
+import com.shankar.intelligentrestaurantmanagementsystem.entity.Role;
 import com.shankar.intelligentrestaurantmanagementsystem.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.NonNull;
@@ -17,18 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/roles")
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
-public class RolesController {
+public class RolesController extends BaseController {
     private final RoleService roleService;
 
     @PostMapping("/add")
-    public ResponseEntity<@NonNull ApiResponse<?>> addRoles(@RequestBody @Valid RoleRequest roleRequest) {
-
-        try {
-            var response = roleService.saveRole(roleRequest);
-            return ResponseEntity.status(201).body(new ApiResponse<>(true, "Role added successfully", response));
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(new ApiResponse<>(false, e.getMessage(), null));
-        }
-
+    public ResponseEntity<@NonNull ApiResponse<Role>> addRoles(@RequestBody @Valid RoleRequest roleRequest) {
+        var response = roleService.saveRole(roleRequest);
+        return created(response);
     }
 }

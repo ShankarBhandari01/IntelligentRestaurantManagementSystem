@@ -7,6 +7,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -17,11 +18,17 @@ public class KotServiceImpl implements KotService {
 
     @Async
     @Override
-   // @CircuitBreaker(name = "kotService", fallbackMethod = "fallback")
-    @Retry(name = "kotServiceRetry")
+    // @CircuitBreaker(name = "kotService", fallbackMethod = "fallback")
+    // @Retry(name = "kotServiceRetry")
+    @Transactional
     public CompletableFuture<Kot> sendOrderToKot(Kot kot) {
-        var savedKot = kotRepository.save(kot);
-        return CompletableFuture.completedFuture(savedKot);
+        try {
+            var savedKot = kotRepository.save(kot);
+            return CompletableFuture.completedFuture(savedKot);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     // Fallback must match the method signature
