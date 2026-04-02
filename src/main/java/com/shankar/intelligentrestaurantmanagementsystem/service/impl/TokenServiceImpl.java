@@ -4,23 +4,27 @@ import com.shankar.intelligentrestaurantmanagementsystem.entity.Token;
 import com.shankar.intelligentrestaurantmanagementsystem.repository.TokenRepository;
 import com.shankar.intelligentrestaurantmanagementsystem.service.TokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
 
+    @Async
     @Override
     public void saveToken(Token token) {
         tokenRepository.save(token);
     }
 
+    @Async
     @Override
-    public Token getToken(String token) {
-        return tokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Token not found"));
+    public CompletableFuture<Token> getToken(String token) {
+        return CompletableFuture.completedFuture(tokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Token not found")));
     }
 
     @Override
@@ -48,14 +52,16 @@ public class TokenServiceImpl implements TokenService {
 
     }
 
+
     @Override
     public boolean validateToken(String token, Long userId) {
         return false;
     }
 
+    @Async
     @Override
-    public List<Token> findAllByUserIdAndExpiredFalseAndRevokedFalse(Long userId) {
-        return tokenRepository.findAllByUserIdAndExpiredFalseAndRevokedFalse(userId)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+    public CompletableFuture<List<Token>> findAllByUserIdAndExpiredFalseAndRevokedFalse(Long userId) {
+        return CompletableFuture.completedFuture(tokenRepository.findAllByUserIdAndExpiredFalseAndRevokedFalse(userId)
+                .orElseThrow(() -> new RuntimeException("Token not found")));
     }
 }

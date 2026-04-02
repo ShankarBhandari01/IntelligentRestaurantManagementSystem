@@ -29,8 +29,7 @@ public class OrderController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable Long id)
-            throws ExecutionException, InterruptedException {
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable Long id) throws ExecutionException, InterruptedException {
         return ok(orderService.getOrderById(id).get());
     }
 
@@ -48,5 +47,7 @@ public class OrderController extends BaseController {
             throws ExecutionException, InterruptedException {
         return ok(orderService.updateOrder(id, request).get());
     }
+
+
 
 }

@@ -6,6 +6,7 @@ import com.shankar.intelligentrestaurantmanagementsystem.mapper.CategoryMapper;
 import com.shankar.intelligentrestaurantmanagementsystem.repository.CategoryRepository;
 import com.shankar.intelligentrestaurantmanagementsystem.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
+    @Async
     @Override
     public CompletableFuture<CategoryResponse> createCategory(CategoryRequest categoryRequest) {
         try {
@@ -29,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @Async
     @Override
     public CompletableFuture<List<CategoryResponse>> getAllCategories() {
         try {

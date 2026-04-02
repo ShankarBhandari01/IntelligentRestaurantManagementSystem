@@ -3,12 +3,13 @@ package com.shankar.intelligentrestaurantmanagementsystem.service;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Token;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 
 public interface TokenService {
     void saveToken(Token token);
 
-    Token getToken(String token);
+    CompletableFuture<Token> getToken(String token);
 
     void deleteToken(String token);
 
@@ -22,6 +23,6 @@ public interface TokenService {
 
     boolean validateToken(String token, Long userId);
 
-    List<Token> findAllByUserIdAndExpiredFalseAndRevokedFalse(Long userId);
+    CompletableFuture<List<Token>> findAllByUserIdAndExpiredFalseAndRevokedFalse(Long userId);
 
 }

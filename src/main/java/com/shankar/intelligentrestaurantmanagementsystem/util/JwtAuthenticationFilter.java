@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var userDetails = userDetailsService.loadUserByUsername(username);
 
                 // get token from database
-                var dbToken = tokenService.getToken(token);
+                var dbToken = tokenService.getToken(token).get();
 
                 if (dbToken != null && dbToken.isRevoked()) {
                     writeError(response, "Token Revoked");

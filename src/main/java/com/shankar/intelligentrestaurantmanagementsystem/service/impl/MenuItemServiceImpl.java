@@ -24,6 +24,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     private final CategoryRepository categoryRepository;
     private final MenuItemMapper menuItemMapper;
 
+    @Async
     @Override
     public CompletableFuture<MenuItemResponse> saveMenuItem(MenuItemRequest request) {
         try {
@@ -50,12 +51,14 @@ public class MenuItemServiceImpl implements MenuItemService {
         }
     }
 
+    @Async
     @Override
     public CompletableFuture<MenuItemResponse> getMenuItem(String id) {
         var menuItem = menuItemRepository.findById(id).orElseThrow(() -> new RuntimeException("Menu Item not found"));
         return CompletableFuture.completedFuture(menuItemMapper.toResponse(menuItem));
     }
 
+    @Async
     @Override
     public CompletableFuture<List<MenuItemResponse>> getAllMenuItems() {
         List<MenuItemResponse> menuItems = menuItemRepository.findAll().stream().map(menuItemMapper::toResponse).toList();

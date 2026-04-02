@@ -2,6 +2,7 @@ package com.shankar.intelligentrestaurantmanagementsystem.dto.request;
 
 
 import com.shankar.intelligentrestaurantmanagementsystem.dto.CustomerDTO;
+import com.shankar.intelligentrestaurantmanagementsystem.dto.OrderStatus;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Customer;
 import com.shankar.intelligentrestaurantmanagementsystem.entity.OrderItems;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class OrderRequest {
     private String orderType;
     private List<OrderItems> items;
     private double totalAmount;
+    private OrderStatus status;
 
     @Override
     public String toString() {

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/roles")
 @PreAuthorize("hasRole('ADMIN')")
@@ -22,8 +24,9 @@ public class RolesController extends BaseController {
     private final RoleService roleService;
 
     @PostMapping("/add")
-    public ResponseEntity<@NonNull ApiResponse<Role>> addRoles(@RequestBody @Valid RoleRequest roleRequest) {
-        var response = roleService.saveRole(roleRequest);
+    public ResponseEntity<@NonNull ApiResponse<Role>> addRoles(@RequestBody @Valid RoleRequest roleRequest)
+            throws ExecutionException, InterruptedException {
+        var response = roleService.saveRole(roleRequest).get();
         return created(response);
     }
 }

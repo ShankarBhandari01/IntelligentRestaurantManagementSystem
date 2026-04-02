@@ -20,7 +20,7 @@ public class UserRolesManager {
             // get roles by id validation
             Set<Long> rolesIds = roles.stream().map(Role::getId).collect(Collectors.toSet());
             // get roles by id in list
-            var role = roleService.getRoleByIdInList(rolesIds);
+            var role = roleService.getRoleByIdInList(rolesIds).get();
             // set roles to user
             user.setRoles(role);
             // return user

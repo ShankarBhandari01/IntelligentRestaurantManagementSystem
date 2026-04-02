@@ -9,7 +9,10 @@ import com.shankar.intelligentrestaurantmanagementsystem.mapper.UserMapper;
 import com.shankar.intelligentrestaurantmanagementsystem.repository.UserRepository;
 import com.shankar.intelligentrestaurantmanagementsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +21,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRolesManager userRolesManager;
 
+    @Async
     @Override
-    public UserResponse createUser(UserRequest request) {
+    public CompletableFuture<UserResponse> createUser(UserRequest request) {
         try {
 
             User user = userMapper.toEntity(request);
@@ -28,27 +32,30 @@ public class UserServiceImpl implements UserService {
             // user to database
             userRepository.save(user);
             // return user
-            return userMapper.toResponse(user);
+            return CompletableFuture.completedFuture(userMapper.toResponse(user));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
+    @Async
     @Override
-    public UserResponse getUser(Long id) {
+    public CompletableFuture<UserResponse> getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return userMapper.toResponse(user);
+        return CompletableFuture.completedFuture(userMapper.toResponse(user));
     }
 
+    @Async
     @Override
-    public UserResponse getUserByEmail(String email) {
+    public CompletableFuture<UserResponse> getUserByEmail(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return userMapper.toResponse(user);
+        return CompletableFuture.completedFuture(userMapper.toResponse(user));
     }
 
+    @Async
     @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public CompletableFuture<Boolean> existsByEmail(String email) {
+        return CompletableFuture.completedFuture(userRepository.existsByEmail(email));
     }
 
 

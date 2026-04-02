@@ -63,22 +63,25 @@ public class AuthController extends BaseController {
     }
 
     private LoginResponse prepareLoginResponse(User user) {
-        Map<String, Object> token = jwtUtil.generateTokens(user);
+        try {
+            Map<String, Object> token = jwtUtil.generateTokens(user);
 
-        Token newToken = tokenManager.saveTokenToDatabase(token.get("token"),
-                user, "token", token.get("tokenExpiration"));
-        Token refreshToken = tokenManager.saveTokenToDatabase(token.get("refresh_token").toString(),
-                user, "refresh", token.get("refresh_tokenExpiration"));
+            Token newToken = tokenManager.saveTokenToDatabase(token.get("token"), user, "token", token.get("tokenExpiration")).get();
+            Token refreshToken = tokenManager.saveTokenToDatabase(token.get("refresh_token").toString(),
+                    user, "refresh", token.get("refresh_tokenExpiration")).get();
 
-        return LoginResponse.builder()
-                .token(newToken.getToken())
-                .refreshToken(refreshToken.getToken())
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .roles(user.getRoles())
-                .isEnabled(user.getIsEnabled())
-                .build();
+            return LoginResponse.builder()
+                    .token(newToken.getToken())
+                    .refreshToken(refreshToken.getToken())
+                    .id(user.getId())
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .roles(user.getRoles())
+                    .isEnabled(user.getIsEnabled())
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

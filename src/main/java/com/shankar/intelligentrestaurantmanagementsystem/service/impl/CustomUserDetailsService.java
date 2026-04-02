@@ -4,6 +4,7 @@ import com.shankar.intelligentrestaurantmanagementsystem.repository.UserReposito
 import com.shankar.intelligentrestaurantmanagementsystem.util.CustomUserDetails;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
+
 
     @Override
     public @NonNull CustomUserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {

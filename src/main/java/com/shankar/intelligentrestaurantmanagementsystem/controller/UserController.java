@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 
 @RestController
 @PreAuthorize("hasRole('ADMIN')")
@@ -23,9 +25,9 @@ public class UserController extends BaseController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<@NonNull ApiResponse<UserResponse>> create(@RequestBody @Valid UserRequest request, HttpSession session) {
+    public ResponseEntity<@NonNull ApiResponse<UserResponse>> create(@RequestBody @Valid UserRequest request, HttpSession session) throws ExecutionException, InterruptedException {
 
-        if (userService.existsByEmail(request.getEmail())) {
+        if (userService.existsByEmail(request.getEmail()).get()) {
             return fail("Email already in use");
         }
         // Hash the password
@@ -34,7 +36,7 @@ public class UserController extends BaseController {
         request.setPassword(hashedPassword);
 
         // save user
-        var response = userService.createUser(request);
+        var response = userService.createUser(request).get();
 
         // Create user
         return created(response);
@@ -42,8 +44,8 @@ public class UserController extends BaseController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<@NonNull ApiResponse<UserResponse>> get(@PathVariable Long id) {
-        return ok(userService.getUser(id));
+    public ResponseEntity<@NonNull ApiResponse<UserResponse>> get(@PathVariable Long id) throws ExecutionException, InterruptedException {
+        return ok(userService.getUser(id).get());
     }
 }
 

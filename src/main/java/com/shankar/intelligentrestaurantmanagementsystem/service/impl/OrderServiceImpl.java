@@ -69,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-
+    @Async
     @Override
     public CompletableFuture<OrderResponse> getOrderById(Long id) {
         var order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));

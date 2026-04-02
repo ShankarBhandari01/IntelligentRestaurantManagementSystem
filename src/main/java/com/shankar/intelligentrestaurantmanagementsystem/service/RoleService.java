@@ -4,13 +4,14 @@ import com.shankar.intelligentrestaurantmanagementsystem.dto.request.RoleRequest
 import com.shankar.intelligentrestaurantmanagementsystem.entity.Role;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public interface RoleService {
-    Role saveRole(RoleRequest roleRequest);
+    CompletableFuture<Role> saveRole(RoleRequest roleRequest);
 
-    Role getRoleByName(String name);
+    CompletableFuture<Role> getRoleByName(String name);
 
-    Role getRoleById(Long id);
+    CompletableFuture<Role> getRoleById(Long id);
 
-    Set<Role> getRoleByIdInList(Set<Long> roleIds);
+    CompletableFuture<Set<Role>> getRoleByIdInList(Set<Long> roleIds);
 }
