@@ -39,7 +39,8 @@ public class MenuItemMapper implements Mapper<MenuItems, MenuItemRequest, MenuIt
 
     @Override
     public MenuItemResponse toResponse(@NonNull MenuItems menuItems) {
-        return MenuItemResponse.builder().id(menuItems.getId())
+        return MenuItemResponse.builder()
+                .id(menuItems.getId())
                 .itemName(languageMapper.toResponse(menuItems.getItemName()))
                 .description(languageMapper.toResponse(menuItems.getDescription()))
                 .remarks(languageMapper.toResponse(menuItems.getRemarks()))

@@ -1,10 +1,9 @@
 package com.shankar.intelligentrestaurantmanagementsystem.dto;
 
-public enum KotStatus {
+public enum OrderItemStatus {
     QUEUED,
     PREPARING,
     READY,
     SERVED,
-    CANCELLED,
-    PRINTED
+    CANCELLED
 }

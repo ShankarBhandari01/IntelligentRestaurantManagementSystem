@@ -34,6 +34,10 @@ public class MenuItems {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "station_id")
+    private Station station;
+
     private String image;
 
     @Embedded

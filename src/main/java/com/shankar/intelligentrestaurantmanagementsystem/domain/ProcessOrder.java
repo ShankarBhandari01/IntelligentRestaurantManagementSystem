@@ -9,7 +9,6 @@ import com.shankar.intelligentrestaurantmanagementsystem.entity.Order;
 import com.shankar.intelligentrestaurantmanagementsystem.mapper.OrderMapper;
 import lombok.Getter;
 
-import java.time.Instant;
 import java.util.List;
 
 
@@ -29,24 +28,11 @@ public class ProcessOrder {
     }
 
     public Kot generateKot() {
-        List<KotItem> kotItems = order.getItems().stream()
-
-                .map(o ->
-                        new KotItem(
-                                null,
-                                o.getItem(),
-                                o.getQuantity(),
-                                o.getSpecial_requests()
-                        )
-                )
-                .toList();
 
         // while saving kot need reference of order
         return Kot.builder()
-                .status(KotStatus.CREATED)
+                .status(KotStatus.QUEUED)
                 .deviceId("")
-                .createdAt(Instant.now())
-                .items(kotItems)
                 .build();
     }
 
